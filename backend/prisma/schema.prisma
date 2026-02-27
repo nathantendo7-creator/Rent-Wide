@@ -1,0 +1,115 @@
+// prisma/schema.prisma
+// RentWide data model — PostgreSQL via Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id        String    @id @default(cuid())
+  name      String
+  phone     String
+  email     String
+  photoUrl  String?
+  bio       String?
+  createdAt DateTime  @default(now())
+  listings  Listing[]
+}
+
+model Neighborhood {
+  id           String    @id @default(cuid())
+  name         String
+  slug         String    @unique
+  description  String?
+  featureImage String?
+  centerLat    Float?
+  centerLng    Float?
+  createdAt    DateTime  @default(now())
+  listings     Listing[]
+}
+
+enum ListingType {
+  RENT
+  SALE
+}
+
+enum ListingCategory {
+  HOUSE
+  APARTMENT
+  OFFICE
+  LAND
+}
+
+enum PriceFrequency {
+  MONTHLY
+  ONE_TIME
+}
+
+enum ListingStatus {
+  AVAILABLE
+  UNDER_OFFER
+  SOLD
+}
+
+model Listing {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  slug           String          @unique
+  title          String
+  type           ListingType
+  category       ListingCategory
+  price          Int
+  currency       String          @default("UGX")
+  priceFrequency PriceFrequency
+  bedrooms       Int
+  bathrooms      Int
+  areaSqm        Float
+  description    String
+  neighborhoodId String
+  agentId        String
+  status         ListingStatus   @default(AVAILABLE)
+  lat            Float
+  lng            Float
+  createdAt      DateTime        @default(now())
+
+  neighborhood Neighborhood  @relation(fields: [neighborhoodId], references: [id])
+  agent        Agent         @relation(fields: [agentId], references: [id])
+  images       ListingImage[]
+  viewings     Viewing[]
+  contacts     Contact[]
+}
+
+model ListingImage {
+  id        String  @id @default(cuid())
+  listingId String
+  url       String
+  sortOrder Int     @default(0)
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String
+  message   String
+  listingId String?
+  createdAt DateTime @default(now())
+  listing   Listing? @relation(fields: [listingId], references: [id])
+}
+
+model Viewing {
+  id                String   @id @default(cuid())
+  listingId         String
+  name              String
+  phone             String
+  preferredDatetime DateTime
+  message           String
+  createdAt         DateTime @default(now())
+  listing           Listing  @relation(fields: [listingId], references: [id])
+}

@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  rentwide-db:
+    image: postgres:14-alpine
+    container_name: rentwide-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rentwide
+      POSTGRES_PASSWORD: rentwide_secret
+      POSTGRES_DB: rentwide
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rentwide"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  rentwide-app:
+    build: .
+    container_name: rentwide-app
+    restart: unless-stopped
+    depends_on:
+      rentwide-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://rentwide:rentwide_secret@rentwide-db:5432/rentwide
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    command: sh -c "npx prisma migrate deploy && node dist/index.js"
+
+volumes:
+  pgdata:

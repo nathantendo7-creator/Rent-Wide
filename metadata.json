@@ -1,0 +1,7 @@
+{
+  "name": "RentWide Uganda",
+  "description": "Premium real estate agency in Kampala, Uganda. Find your perfect residential or commercial property with trusted experts.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

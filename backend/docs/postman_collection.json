@@ -1,0 +1,131 @@
+{
+  "info": {
+    "name": "RentWide API",
+    "description": "Demo real estate backend API collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000/api" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listings",
+      "item": [
+        {
+          "name": "GET /listings (all)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/listings"
+          }
+        },
+        {
+          "name": "GET /listings (filter rent)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/listings?type=RENT&page=1&perPage=6",
+              "query": [
+                { "key": "type", "value": "RENT" },
+                { "key": "page", "value": "1" },
+                { "key": "perPage", "value": "6" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /listings/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/listings/luxury-4bed-villa-kololo"
+          }
+        },
+        {
+          "name": "GET /listings/nearby",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/listings/nearby?lat=0.3389&lng=32.5861&radius_km=3",
+              "query": [
+                { "key": "lat", "value": "0.3389" },
+                { "key": "lng", "value": "32.5861" },
+                { "key": "radius_km", "value": "3" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Neighborhoods",
+      "item": [
+        {
+          "name": "GET /neighborhoods",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/neighborhoods"
+          }
+        },
+        {
+          "name": "GET /neighborhoods?popular=true",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/neighborhoods?popular=true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "POST /viewings",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"listingId\": \"<LISTING_ID_HERE>\",\n  \"name\": \"John Doe\",\n  \"phone\": \"+256700000001\",\n  \"preferredDatetime\": \"2025-06-15T10:00:00Z\",\n  \"message\": \"I would like to view this property on Saturday morning.\"\n}"
+            },
+            "url": "{{baseUrl}}/viewings"
+          }
+        },
+        {
+          "name": "POST /contacts",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane@example.com\",\n  \"phone\": \"+256700000002\",\n  \"message\": \"Please call me about available 3-bedroom options in Ntinda.\"\n}"
+            },
+            "url": "{{baseUrl}}/contacts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dev",
+      "item": [
+        {
+          "name": "POST /seed (dev only)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/seed"
+          }
+        }
+      ]
+    }
+  ]
+}
