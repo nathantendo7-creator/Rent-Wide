@@ -9,7 +9,7 @@ interface ListingCardProps {
 
 export default function ListingCard({ property }: ListingCardProps) {
   return (
-    <Link 
+    <Link
       to={`/property/${property.slug}`}
       className="group block bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 transition-all duration-700 hover:shadow-2xl hover:-translate-y-2"
     >
@@ -21,7 +21,7 @@ export default function ListingCard({ property }: ListingCardProps) {
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-        
+
         <div className="absolute top-6 left-6 flex gap-2">
           <span className="bg-white/90 backdrop-blur-md text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
             {property.status}
@@ -67,7 +67,7 @@ export default function ListingCard({ property }: ListingCardProps) {
           </div>
           <div className="text-right">
             <p className="text-2xl font-serif font-bold text-primary">${property.price.toLocaleString()}</p>
-            <p className="text-[10px] text-muted-text uppercase font-black tracking-widest">Per Month</p>
+            <p className="text-[10px] text-muted-text uppercase font-black tracking-widest">{property.status === 'For Rent' ? 'Per Month' : 'One Time'}</p>
           </div>
         </div>
       </div>

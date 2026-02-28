@@ -63,7 +63,7 @@ export default function PropertyDetail() {
             <p className="text-5xl md:text-6xl font-serif font-bold text-primary mb-2">
               ${property.price.toLocaleString()}
             </p>
-            <p className="text-sm text-muted-text uppercase font-black tracking-widest">Per Month</p>
+            <p className="text-sm text-muted-text uppercase font-black tracking-widest">{property.status === 'For Rent' ? 'Per Month' : 'One Time'}</p>
           </div>
         </div>
 
