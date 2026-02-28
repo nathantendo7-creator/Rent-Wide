@@ -9,12 +9,12 @@ export default function Neighborhoods() {
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    gsap.fromTo(sectionRef.current?.querySelectorAll('.neighborhood-card'), 
+    gsap.fromTo(sectionRef.current?.querySelectorAll('.neighborhood-card'),
       { y: 100, opacity: 0 },
-      { 
-        y: 0, 
-        opacity: 1, 
-        duration: 1.2, 
+      {
+        y: 0,
+        opacity: 1,
+        duration: 1.2,
         stagger: 0.2,
         scrollTrigger: {
           trigger: sectionRef.current,
@@ -35,7 +35,7 @@ export default function Neighborhoods() {
               Explore the most prestigious enclaves in Kampala. From the historic charm of Nakasero to the modern luxury of Kololo.
             </p>
           </div>
-          <Link to="/search" className="text-accent font-bold text-lg hover:underline tracking-widest uppercase text-[12px]">
+          <Link to="/listings" className="text-accent font-bold text-lg hover:underline tracking-widest uppercase text-[12px]">
             Explore All Areas
           </Link>
         </div>

@@ -19,14 +19,19 @@ Deno.serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const url = new URL(req.url)
-    const id = url.searchParams.get('id')
+    // Parse everything from the POST body for clarity with frontend SDK
+    const body = await req.json().catch(() => ({}))
+    const { action, id, type, q, page = 1, perPage = 12 } = body
 
     // ── GET single listing by slug ──
-    if (req.method === 'GET' && id) {
+    if (action === 'get_listing' && id) {
       const { data, error } = await supabaseClient
         .from('listings')
-        .select('*')
+        .select(`
+          *,
+          neighborhood:neighborhoods(*),
+          agent:agents(*)
+        `)
         .eq('slug', id)
         .single()
 
@@ -39,15 +44,14 @@ Deno.serve(async (req) => {
     }
 
     // ── GET all listings (with pagination + filters) ──
-    if (req.method === 'GET') {
-      const type = url.searchParams.get('type')
-      const q = url.searchParams.get('q')
-      const page = parseInt(url.searchParams.get('page') || '1')
-      const perPage = parseInt(url.searchParams.get('perPage') || '12')
-
+    if (action === 'get_listings') {
       let query = supabaseClient
         .from('listings')
-        .select('*', { count: 'exact' })
+        .select(`
+          *,
+          neighborhood:neighborhoods(*),
+          agent:agents(*)
+        `, { count: 'exact' })
 
       if (type) query = query.eq('type', type.toUpperCase())
       if (q) query = query.ilike('title', `%${q}%`)
@@ -74,12 +78,10 @@ Deno.serve(async (req) => {
     }
 
     // ── POST create a new listing ──
-    if (req.method === 'POST') {
-      const body = await req.json()
-
+    if (action === 'create_listing') {
       const { data, error } = await supabaseClient
         .from('listings')
-        .insert(body)
+        .insert(body.payload)
         .select()
         .single()
 
@@ -91,9 +93,9 @@ Deno.serve(async (req) => {
       })
     }
 
-    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+    return new Response(JSON.stringify({ error: 'Action Not Allowed or Not Found' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 405,
+      status: 400,
     })
   } catch (error) {
     return new Response(JSON.stringify({ success: false, error: (error as Error).message }), {

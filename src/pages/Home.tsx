@@ -63,7 +63,7 @@ export default function Home() {
                 Explore our hand-picked selection of Kampala's most exceptional properties, where luxury meets lifestyle.
               </p>
             </div>
-            <Link to="/search" className="group flex items-center gap-4 text-primary font-bold text-lg hover:text-accent transition-colors">
+            <Link to="/listings" className="group flex items-center gap-4 text-primary font-bold text-lg hover:text-accent transition-colors">
               View All Listings
               <div className="w-12 h-12 rounded-full border border-primary/10 flex items-center justify-center group-hover:border-accent group-hover:bg-accent group-hover:text-primary transition-all">
                 <ArrowRight className="w-5 h-5" />
@@ -131,7 +131,7 @@ export default function Home() {
                 <Link to="/contact" className="bg-accent text-primary px-12 py-5 rounded-full font-bold text-lg hover:bg-white transition-all shadow-2xl">
                   Contact an Agent
                 </Link>
-                <Link to="/search" className="text-white font-bold hover:text-accent transition-colors flex items-center gap-2">
+                <Link to="/listings" className="text-white font-bold hover:text-accent transition-colors flex items-center gap-2">
                   Browse Properties <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>

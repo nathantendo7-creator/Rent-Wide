@@ -1,20 +1,41 @@
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { 
-  BedDouble, Bath, Square, MapPin, Phone, MessageCircle, 
-  Calendar, Share2, Heart, ChevronLeft, ChevronRight, CheckCircle2 
+import {
+  BedDouble, Bath, Square, MapPin, Phone, MessageCircle,
+  Calendar, Share2, Heart, ChevronLeft, ChevronRight, CheckCircle2
 } from 'lucide-react';
-import { properties } from '@/src/data/mockData';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker } from 'react-leaflet';
 import { cn } from '@/src/lib/utils';
+import { getListingById, mapBackendToProperty } from '@/src/lib/api';
+import { Property } from '@/src/data/mockData';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
-  const property = properties.find(p => p.slug === slug);
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
 
-  if (!property) return <div className="pt-40 text-center">Property not found</div>;
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!slug) return;
+      setLoading(true);
+      try {
+        const response = await getListingById(slug);
+        if (response.success && response.data) {
+          setProperty(mapBackendToProperty(response.data));
+        }
+      } catch (error) {
+        console.error('Failed to fetch property:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperty();
+  }, [slug]);
+
+  if (loading) return <div className="pt-40 text-center animate-pulse text-2xl font-serif text-muted-text">Loading Residence...</div>;
+  if (!property) return <div className="pt-40 text-center text-2xl font-serif text-muted-text">Property Not Found</div>;
 
   return (
     <div className="pt-32 pb-32 bg-bg-light">
@@ -56,31 +77,31 @@ export default function PropertyDetail() {
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-500" />
-            
+
             <div className="absolute inset-0 flex items-center justify-between px-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <button 
+              <button
                 onClick={() => setActiveImage(prev => (prev > 0 ? prev - 1 : property.images.length - 1))}
                 className="w-16 h-16 bg-white/90 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center hover:bg-accent hover:text-white transition-all"
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
-              <button 
+              <button
                 onClick={() => setActiveImage(prev => (prev < property.images.length - 1 ? prev + 1 : 0))}
                 className="w-16 h-16 bg-white/90 backdrop-blur-xl rounded-full shadow-2xl flex items-center justify-center hover:bg-accent hover:text-white transition-all"
               >
                 <ChevronRight className="w-8 h-8" />
               </button>
             </div>
-            
+
             <div className="absolute bottom-10 right-10 bg-primary/80 backdrop-blur-xl text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest">
               {activeImage + 1} / {property.images.length} Perspectives
             </div>
           </div>
-          
+
           <div className="hidden lg:grid grid-rows-3 gap-8">
             {property.images.slice(1, 4).map((img, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={cn(
                   "relative rounded-[2.5rem] overflow-hidden shadow-xl cursor-pointer group",
                   activeImage === i + 1 ? "ring-4 ring-accent" : ""
@@ -207,14 +228,14 @@ export default function PropertyDetail() {
               </div>
 
               <div className="space-y-6">
-                <a 
+                <a
                   href={`tel:${property.agent.phone}`}
                   className="w-full flex items-center justify-center gap-4 bg-white text-primary py-5 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-accent hover:text-white transition-all shadow-2xl"
                 >
                   <Phone className="w-5 h-5" />
                   Direct Connection
                 </a>
-                <a 
+                <a
                   href={`https://wa.me/${property.agent.phone.replace(/\s/g, '')}`}
                   className="w-full flex items-center justify-center gap-4 bg-white/10 border border-white/20 text-white py-5 rounded-full font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white hover:text-primary transition-all"
                 >
